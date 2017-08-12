@@ -17,7 +17,8 @@
 import unittest
 import json
 import argparse
-
+import os
+import re
 
 def load_config(configfilepath):
     """
@@ -37,24 +38,37 @@ def load_config(configfilepath):
     with open(configfilepath) as infile:
         config = json.load(infile)
         infile.close()
-    return config
+    # Übersetze alle regexp
+    ersetzen = [[re.compile(pattern["regexp"]),pattern["ziel"]] for pattern in config["ersetzen"]]
+    warnung = [[re.compile(pattern["regexp"]),pattern["warnung"]] for pattern in config["warnung"]]
+    return ersetzen, warnung
+
+
+def datei_saeubern(ersetzen, warnung, inpath, outpath=None, simulation=False):
+
+    global VERBOSE
+    if VERBOSE:
+        if not outpath:
+            print("Säubere Datei %s, Ausgabe zu StdOut" % inpath)
+        else:
+            print("Säubere Datei %s, Ausgabe zu %s" % (inpath, outpath))
+    # Datei in Speicher laden
+    with open(inpath) as infile:
+        data = infile.read()
+    # zuerst ersetzen
+
 
 
 if __name__ == '__main__':
     # Argumente parsen
     parser = argparse.ArgumentParser(description='Edward simple CMS system.')
-    parser.add_argument('command', metavar='command', type=str, choices=['new', 'render', 'serve'],
-                        help="""Can be "new", "render" or "serve".
-                        "new" will create a new edward site.
-                        "render" will render the existing edward site.
-                        """)
-    parser.add_argument('Konfigdateipfad', action='store', type=str, dest='configpath', default='', nargs='1',
-                        help='Pfad zur Textdatei die gesäubert werden soll')
-    parser.add_argument('Textdateipfad', action='store', type=str, dest='inpath', default='', nargs='+',
-                        help='Pfad zur Textdatei die gesäubert werden soll')
-    parser.add_argument('-o', action='store', type=str, dest='outpath', default='',
-                        help='Pfad zur Ausgabedatei. Default ist Ausgabe des neuen Textes nach StdOut.')
-    parser.add_argument('-s', action='store_true', type=str, dest='simulate', default='',
+    parser.add_argument('configpath', action='store', type=str, nargs=1,
+                        help='Konfigdateipfad. Pfad zur Textdatei die gesäubert werden soll')
+    parser.add_argument('infilepath', action='store', type=str,  default='', nargs='+',
+                        help='Textdateipfad. Pfad zur Textdatei die gesäubert werden soll')
+    parser.add_argument('-o', action='store', type=str, dest='outprefix', default='',
+                        help='Ausgabe des neuen Textes in eine Datei statt StdOut. Der Prefix wird vor die neue Datei gehängt. Also z.B. Prefix "neu_" macht aus "eingang.txt" ein "neu_eingang.txt". ')
+    parser.add_argument('-s', action='store_true', dest='simulate',
                         help='Simulation. Ändert nichts an den Daten, sondern gibt auf StdOut aus was er tun würde')
     parser.add_argument('-v', action='store_true', dest='verbose',
                         help='Verbose. Zum Debuggen.')
@@ -63,3 +77,19 @@ if __name__ == '__main__':
     if args.verbose:
         print("setting VERBOSE = True")
         VERBOSE = True
+    # Konfigdatei laden
+    config = load_config(args.configpath)
+    if args.outprefix:
+        # neue Ausgabedateien erzeugen
+        outpaths = []
+        for infile in args.infilepath:
+            filenpath, filename = os.path.split(infile)
+            outpaths.append(filenpath, args.outprefix+filename)
+    #
+    print(args.infilepath)
+    # alle angebenenen Dateien säubern
+    for n, infile in enumerate(args.infilepath):
+        if args.outprefix:
+            datei_saeubern(config, infile, outpath=outpaths[n], simulation=args.simulate)
+        else:
+            datei_saeubern(config, infile, simulation=args.simulate)

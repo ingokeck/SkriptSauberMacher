@@ -29,8 +29,9 @@ skriptsaubermacher [option] Konfigdateipfad Textdateipfad
 
 Optionen:
 <dl>
-  <dt>-o Ausgabedateipfad:</dt>
-  <dd>Ausgabe des neuen Textes in Ausgabedateipfad statt StdOut</dd>
+  <dt>-o Ausgabedatei-Prefix:</dt>
+  <dd>Ausgabe des neuen Textes in eine Datei statt StdOut. Der Prefix wird vor die neue Datei gehängt. 
+      Also z.B. Prefix 'neu_' macht aus 'eingang.txt' ein 'neu_eingang.txt'.</dd>
   <dt>-s:</dt>
   <dd>Simulation: Gibt auf StdOut aus was es tun würde, macht aber nichts.</dd>
 </dl>
