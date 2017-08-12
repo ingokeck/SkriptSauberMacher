@@ -33,14 +33,16 @@ def load_config(configfilepath):
               {"regexp":"\\?\\?\\?","warnung":"Fehlt da was?"}]
     }
     :param configfilepath: Pfad zur Konfigdatei
-    :return: Dictionary der Konfigdatei
+    :return: Listen der kompilierte ersetzen Muster und warnung Muster mit jeweils Ziel/Beschreibung und der
+             regexp als string, alles jeweils als Liste:
+             [[comp(regexp), Ziel, regexp],...], [[comp(regexp), Warnung, regexp],...]
     """
     with open(configfilepath) as infile:
         config = json.load(infile)
         infile.close()
     # Übersetze alle regexp
-    ersetzen = [[re.compile(pattern["regexp"]),pattern["ziel"]] for pattern in config["ersetzen"]]
-    warnung = [[re.compile(pattern["regexp"]),pattern["warnung"]] for pattern in config["warnung"]]
+    ersetzen = [[re.compile(pattern["regexp"]),pattern["ziel"],pattern["regexp"]] for pattern in config["ersetzen"]]
+    warnung = [[re.compile(pattern["regexp"]),pattern["warnung"],pattern["regexp"]] for pattern in config["warnung"]]
     return ersetzen, warnung
 
 
@@ -55,7 +57,21 @@ def datei_saeubern(ersetzen, warnung, inpath, outpath=None, simulation=False):
     # Datei in Speicher laden
     with open(inpath) as infile:
         data = infile.read()
+    if not data:
+        return False
     # zuerst ersetzen
+    for pattern in ersetzen:
+        newdata, times = pattern[0].subn(pattern[1], data)
+        if newdata:
+            data = newdata
+    # jetzt warnung
+    # iterator?
+    for pattern in warnung:
+        iterator = pattern.finditer(data)
+        for n in iterator:
+            print("Datei %s, position %d: %s" %(inpath, n.start(), pattern[1]))
+    if not simulation:
+        # daten ausgeben oder
 
 
 
