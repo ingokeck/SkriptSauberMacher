@@ -35,5 +35,5 @@ Optionen:
   <dd>Simulation: Gibt auf StdOut aus was es tun würde, macht aber nichts.</dd>
 </dl>
 
-
-
+# Lizenz
+GNU AFFERO GENERAL PUBLIC LICENSE Version 3
