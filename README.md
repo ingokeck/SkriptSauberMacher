@@ -30,7 +30,7 @@ skriptsaubermacher [option] Konfigdateipfad Textdateipfad
 Optionen:
 <dl>
   <dt>-o Ausgabedateipfad:</dt>
-  <dd>Ausgabe in Ausgabedateipfad statt StdOut</dd>
+  <dd>Ausgabe des neuen Textes in Ausgabedateipfad statt StdOut</dd>
   <dt>-s:</dt>
   <dd>Simulation: Gibt auf StdOut aus was es tun würde, macht aber nichts.</dd>
 </dl>
