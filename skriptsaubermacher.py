@@ -129,7 +129,7 @@ class FileTranslateTest(unittest.TestCase):
         shutil.copyfile('test.json', configpath)
         shutil.copyfile('test.txt', testpath)
         ersetzen, warnung = load_config(configpath)
-        ergebnis = datei_saeubern(ersetzen, warnung, testpath, outpath, simulation=True)
+        ergebnis = datei_saeubern(ersetzen, warnung, testpath, outpath, simulation=False)
         with open(outpath) as infile:
             data = infile.read()
             print(data)

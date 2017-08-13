@@ -12,9 +12,10 @@ Die Konfig-Datei ist JSON und sieht z.B. so aus:
 ```json
 {
   "ersetzen":[{"regexp":"\\.\\.\\.","ziel":"…"},
-              {"regexp":"[(\\+\\-),(\\-\\+)]","ziel":"±"},
-              {"regexp":"  ","ziel":" "}],
-  "warnung":[{"regexp":"[0-9] [(mm),(km),(nm),(cm)]","warnung":"Leerzeichen zwischen Zahl und Einheit?"},
+              {"regexp":"\\+\\-","ziel":"±"},
+              {"regexp":"  *","ziel":" "}],
+  "warnung":[{"regexp":"[0-9] [(mm)(km)(nm)(cm)]","warnung":"Leerzeichen zwischen Zahl und Einheit?"},
+              {"regexp":"[0-9][(mm)(km)(nm)(cm)]","warnung":"Kein Leerzeichen zwischen Zahl und Einheit?"},
               {"regexp":"\\. [a-z]","warnung":"Kleiner Satzanfang?"},
               {"regexp":"\\?\\?\\?","warnung":"Fehlt da was?"}]
 }
@@ -29,6 +30,8 @@ skriptsaubermacher [option] Konfigdateipfad Textdateipfad
 
 Optionen:
 <dl>
+  <dt>-v</dt>
+  <dd>Verbose. Erzählt was es macht.</dd>
   <dt>-o Ausgabedatei-Prefix:</dt>
   <dd>Ausgabe des neuen Textes in eine Datei statt StdOut. Der Prefix wird vor die neue Datei gehängt. 
       Also z.B. Prefix 'neu_' macht aus 'eingang.txt' ein 'neu_eingang.txt'.</dd>
