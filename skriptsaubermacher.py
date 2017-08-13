@@ -179,11 +179,10 @@ if __name__ == '__main__':
                         help='Simulation. Ändert nichts an den Daten, sondern gibt auf StdOut aus was er tun würde')
     parser.add_argument('-v', action='store_true', dest='verbose',
                         help='Verbose. Zum Debuggen.')
-    global VERBOSE
     args = parser.parse_args()
     # Versioncheck
     if sys.version_info[0] < 3:
-        raise Exception("Bitte Python 3 verwenden.")
+        raise Exception("Bitte Python 3.4 oder neuer verwenden.")
     if args.verbose:
         print("setting VERBOSE = True")
         VERBOSE = True
