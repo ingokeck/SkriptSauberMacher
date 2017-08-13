@@ -21,6 +21,7 @@ import argparse
 import os
 import re
 import sys
+
 VERBOSE = False
 
 
@@ -71,7 +72,6 @@ def load_config(configfilepath):
 
 
 def datei_saeubern(ersetzen, warnung, inpath, outpath=None, simulation=False):
-
     global VERBOSE
     if VERBOSE:
         if not outpath:
@@ -91,7 +91,7 @@ def datei_saeubern(ersetzen, warnung, inpath, outpath=None, simulation=False):
     data_in_zeilen = data.splitlines(keepends=True)
     zeilenverzeichnis = []
     for z, zeile in enumerate(data_in_zeilen):
-        neuezeile = [(z+1, p+1) for p in range(len(zeile))]  # ok, die meisten Leute fangen bei 1 an zu zählen
+        neuezeile = [(z + 1, p + 1) for p in range(len(zeile))]  # ok, die meisten Leute fangen bei 1 an zu zählen
         # print(neuezeile)
         zeilenverzeichnis += neuezeile
     # print(zeilenverzeichnis)
@@ -110,7 +110,7 @@ def datei_saeubern(ersetzen, warnung, inpath, outpath=None, simulation=False):
     data_in_zeilen = data.splitlines(keepends=True)
     zeilenverzeichnis = []
     for z, zeile in enumerate(data_in_zeilen):
-        neuezeile = [(z+1, p+1) for p in range(len(zeile))]  # ok, die meisten Leute fangen bei 1 an zu zählen
+        neuezeile = [(z + 1, p + 1) for p in range(len(zeile))]  # ok, die meisten Leute fangen bei 1 an zu zählen
         # print(neuezeile)
         zeilenverzeichnis += neuezeile
     # iterator?
@@ -160,6 +160,7 @@ class FileTranslateTest(unittest.TestCase):
         shutil.rmtree(temppath)
         self.assertTrue(ergebnis)
 
+
 if __name__ == '__main__':
     # Argumente parsen
     parser = argparse.ArgumentParser(
@@ -170,7 +171,7 @@ if __name__ == '__main__':
                     + "Die Zeilen/Spalten-Angaben der Warnregeln beziehen sich auf den schon ersetzen Text.")
     parser.add_argument('configpath', action='store', type=str, nargs=1,
                         help='Konfigdateipfad. Pfad zur Textdatei die gesäubert werden soll')
-    parser.add_argument('infilepath', action='store', type=str,  default='', nargs='+',
+    parser.add_argument('infilepath', action='store', type=str, default='', nargs='+',
                         help='Textdateipfad. Pfad zur Textdatei die gesäubert werden soll')
     parser.add_argument('-o', action='store', type=str, dest='outprefix', default='',
                         help='Ausgabe des neuen Textes in eine Datei statt StdOut. Der Prefix wird vor die neue ' +
@@ -193,7 +194,7 @@ if __name__ == '__main__':
         # neue Ausgabedateien erzeugen
         for infile in args.infilepath:
             filenpath, filename = os.path.split(infile)
-            outpaths.append(os.path.join(filenpath, args.outprefix+filename))
+            outpaths.append(os.path.join(filenpath, args.outprefix + filename))
     #
     # alle angebenenen Dateien säubern
     for n, infile in enumerate(args.infilepath):
