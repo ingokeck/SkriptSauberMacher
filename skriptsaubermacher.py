@@ -14,11 +14,13 @@
 #
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import unittest
 import json
 import argparse
 import os
 import re
+import sys
 
 def load_config(configfilepath):
     """
@@ -37,12 +39,31 @@ def load_config(configfilepath):
              regexp als string, alles jeweils als Liste:
              [[comp(regexp), Ziel, regexp],...], [[comp(regexp), Warnung, regexp],...]
     """
+    global VERBOSE
+    if isinstance(configfilepath, list):
+        configfilepath = configfilepath[0]
     with open(configfilepath) as infile:
         config = json.load(infile)
         infile.close()
     # Übersetze alle regexp
-    ersetzen = [[re.compile(pattern["regexp"]),pattern["ziel"],pattern["regexp"]] for pattern in config["ersetzen"]]
-    warnung = [[re.compile(pattern["regexp"]),pattern["warnung"],pattern["regexp"]] for pattern in config["warnung"]]
+    #ersetzen = [[re.compile(pattern["regexp"]),pattern["ziel"],pattern["regexp"]] for pattern in config["ersetzen"]]
+    #warnung = [[re.compile(pattern["regexp"]),pattern["warnung"],pattern["regexp"]] for pattern in config["warnung"]]
+    # besser Muster für Muster, damit es bei Problemen eine Fehlermeldung gibt.
+    ersetzen = []
+    for pattern in config["ersetzen"]:
+        if VERBOSE:
+            print("Überstetze Muster %s" % pattern["regexp"])
+        ersetzen.append([re.compile(pattern["regexp"]),pattern["ziel"],pattern["regexp"]])
+    warnung = []
+    for pattern in config["warnung"]:
+        if VERBOSE:
+            print("Überstetze Muster %s" % pattern["regexp"])
+        warnung.append([re.compile(pattern["regexp"]),pattern["warnung"],pattern["regexp"]])
+    if VERBOSE:
+        print("Ergebnisse: Ersetzten:")
+        print(ersetzen)
+        print("Warnen:")
+        print(warnung)
     return ersetzen, warnung
 
 
@@ -57,11 +78,18 @@ def datei_saeubern(ersetzen, warnung, inpath, outpath=None, simulation=False):
     # Datei in Speicher laden
     with open(inpath) as infile:
         data = infile.read()
+        infile.close()
     if not data:
+        if VERBOSE:
+            print("Datei %s ist leer, oder Fehler beim Lesen." % inpath)
         return False
     # zuerst ersetzen
     for pattern in ersetzen:
         newdata, times = pattern[0].subn(pattern[1], data)
+        if simulation:
+            print("Datei %s, Muster %s %d mal gefunden" % (inpath, pattern[2],times), file=sys.stderr)
+        if VERBOSE:
+            print("Datei %s, Muster %s %d mal gefunden" % (inpath, pattern[2], times), file=sys.stdout)
         if newdata:
             data = newdata
     # jetzt warnung
@@ -69,10 +97,24 @@ def datei_saeubern(ersetzen, warnung, inpath, outpath=None, simulation=False):
     for pattern in warnung:
         iterator = pattern.finditer(data)
         for n in iterator:
-            print("Datei %s, position %d: %s" %(inpath, n.start(), pattern[1]))
+            # Warnung nach stderr ausgeben
+            print("Datei %s, position %d: %s" %(inpath, n.start(), pattern[1]), file=sys.stderr)
     if not simulation:
-        # daten ausgeben oder
+        if outpath:
+            with open(outpath, 'w') as outfile:
+                outfile.write(data)
+                outfile.close()
+        else:
+            print(data, file=sys.stdout)
+    return True
 
+
+def FileTranslateTest(unittest.TestCase):
+    def test_file_translate:
+        global VERBOSE
+        VERBOSE = True
+        ersetzen, warnung = load_config('test.json')
+        datei_saeubern(ersetzen, warnung, 'test.txt', outpath=None, simulation=True)
 
 
 if __name__ == '__main__':
@@ -89,12 +131,13 @@ if __name__ == '__main__':
     parser.add_argument('-v', action='store_true', dest='verbose',
                         help='Verbose. Zum Debuggen.')
     global VERBOSE
+    VERBOSE = False
     args = parser.parse_args()
     if args.verbose:
         print("setting VERBOSE = True")
         VERBOSE = True
     # Konfigdatei laden
-    config = load_config(args.configpath)
+    ersetzen, warnung = load_config(args.configpath)
     if args.outprefix:
         # neue Ausgabedateien erzeugen
         outpaths = []
@@ -106,6 +149,6 @@ if __name__ == '__main__':
     # alle angebenenen Dateien säubern
     for n, infile in enumerate(args.infilepath):
         if args.outprefix:
-            datei_saeubern(config, infile, outpath=outpaths[n], simulation=args.simulate)
+            datei_saeubern(ersetzen, warnung, inpath=infile, outpath=outpaths[n], simulation=args.simulate)
         else:
-            datei_saeubern(config, infile, simulation=args.simulate)
+            datei_saeubern(ersetzen, warnung, inpath=infile, simulation=args.simulate)

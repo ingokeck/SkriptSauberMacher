@@ -12,9 +12,9 @@ Die Konfig-Datei ist JSON und sieht z.B. so aus:
 ```json
 {
   "ersetzen":[{"regexp":"\\.\\.\\.","ziel":"…"},
-              {"regexp":"([+-],[-+])","ziel":"±"},
+              {"regexp":"[(\\+\\-),(\\-\\+)]","ziel":"±"},
               {"regexp":"  ","ziel":" "}],
-  "warnung":[{"regexp":"[0-9] [(mm),(km),(nm),(cm)","warnung":"Leerzeichen zwischen Zahl und Einheit?"},
+  "warnung":[{"regexp":"[0-9] [(mm),(km),(nm),(cm)]","warnung":"Leerzeichen zwischen Zahl und Einheit?"},
               {"regexp":"\\. [a-z]","warnung":"Kleiner Satzanfang?"},
               {"regexp":"\\?\\?\\?","warnung":"Fehlt da was?"}]
 }
