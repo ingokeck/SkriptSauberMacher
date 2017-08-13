@@ -95,7 +95,7 @@ def datei_saeubern(ersetzen, warnung, inpath, outpath=None, simulation=False):
     # jetzt warnung
     # iterator?
     for pattern in warnung:
-        iterator = pattern.finditer(data)
+        iterator = pattern[0].finditer(data)
         for n in iterator:
             # Warnung nach stderr ausgeben
             print("Datei %s, position %d: %s" %(inpath, n.start(), pattern[1]), file=sys.stderr)
@@ -109,13 +109,34 @@ def datei_saeubern(ersetzen, warnung, inpath, outpath=None, simulation=False):
     return True
 
 
-def FileTranslateTest(unittest.TestCase):
-    def test_file_translate:
+class FileTranslateTest(unittest.TestCase):
+    def test_file_translate(self):
         global VERBOSE
         VERBOSE = True
         ersetzen, warnung = load_config('test.json')
-        datei_saeubern(ersetzen, warnung, 'test.txt', outpath=None, simulation=True)
+        ergebnis = datei_saeubern(ersetzen, warnung, 'test.txt', outpath=None, simulation=True)
+        self.assertTrue(ergebnis)
 
+
+    def test_file_write(self):
+        global VERBOSE
+        VERBOSE = False
+        import tempfile, shutil
+        temppath = tempfile.mkdtemp()
+        configpath = os.path.join(temppath, 'test.json')
+        testpath = os.path.join(temppath, 'test.txt')
+        outpath = os.path.join(temppath, 'ergebnis.txt')
+        shutil.copyfile('test.json', configpath)
+        shutil.copyfile('test.txt', testpath)
+        ersetzen, warnung = load_config(configpath)
+        ergebnis = datei_saeubern(ersetzen, warnung, testpath, outpath, simulation=True)
+        with open(outpath) as infile:
+            data = infile.read()
+            print(data)
+            infile.close()
+        # temporäres Verzeichnis löschen
+        shutil.rmtree(temppath)
+        self.assertTrue(ergebnis)
 
 if __name__ == '__main__':
     # Argumente parsen

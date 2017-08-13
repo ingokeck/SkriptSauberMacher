@@ -1,0 +1,7 @@
+# Ein kleiner Beispieltext
+
+Man kann natürlich sagen, daß    10km gleich 10.000 m sind, oder auch dass sie sich ähneln.
+aber muss das so sein?
+
+Natürlich nicht. es geht auch anders... Sagen wir, es sind+-10kg, oder -+ 5mm.
+Wir denken nur nicht an sowas.
