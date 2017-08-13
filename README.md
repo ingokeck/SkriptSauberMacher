@@ -43,5 +43,8 @@ Optionale Optionen:
   <dd>Simulation: Gibt auf StdOut aus was es tun würde, macht aber nichts.</dd>
 </dl>
 
+# Vorraussetzungen
+Python ab 3.2. Getestet mit Python 3.6
+
 # Lizenz
 GNU AFFERO GENERAL PUBLIC LICENSE Version 3

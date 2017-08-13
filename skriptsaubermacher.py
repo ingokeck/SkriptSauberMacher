@@ -23,6 +23,9 @@ import re
 import sys
 
 VERBOSE = False
+# Versioncheck
+if sys.version_info[0] < 3:
+    raise Exception("Bitte Python 3.4 oder neuer verwenden.")
 
 
 def load_config(configfilepath):
