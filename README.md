@@ -5,7 +5,7 @@ Ein kleines Python-Skript das darauf ausgelegt ist, Texte automatisiert typograp
 Das Skript liest die Konfiguration aus einer Konfig-Datei ein, die folgende Teile hat:
 
 * ersetzen: Alle RegExp hier werden automatisiert durch ein Ziel pro RegExp ersetz
-* warnung: Alle RegExp hier werden auf StdOut mit Dateiname und Ziele und entsprechende Warnung ausgegeben
+* warnung: Alle RegExp hier werden auf StdErr mit Dateiname und Ziele und entsprechende Warnung ausgegeben
 
 Die Konfig-Datei ist JSON und sieht z.B. so aus:
 
@@ -25,10 +25,14 @@ Die Konfig-Datei ist JSON und sieht z.B. so aus:
 Das Skript wird so aufgerufen:
 
 ```
-skriptsaubermacher [option] Konfigdateipfad Textdateipfad
+skriptsaubermacher [option] Konfigdateipfad Textdateipfad [Textdateipfad [Textdateipfad...]]
 ```
 
-Optionen:
+Die Ausgabe erfolgt auf StdOut, die Warnungen auf StdError. Wenn man die gesäuberte Ausgabe in eine
+Datei haben möchte sollte man die Prefix-Option nehmen. Damit kann man auch viele Dateien auf
+einmal behandlen lassen.
+
+Optionale Optionen:
 <dl>
   <dt>-v</dt>
   <dd>Verbose. Erzählt was es macht.</dd>
